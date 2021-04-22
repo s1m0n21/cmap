@@ -30,4 +30,18 @@ func TestConcurrentMap(t *testing.T) {
 
 	t.Logf("ok: %v", ok)
 	t.Logf("r: %+v", r.(*value))
+
+	dr, err := cm.Del(k)
+	if err != nil {
+		panic(err)
+	}
+
+	t.Logf("dr: %v", dr)
+
+	r, ok, err = cm.Get(k)
+	if err != nil {
+		panic(err)
+	}
+
+	t.Logf("ok: %v", ok)
 }

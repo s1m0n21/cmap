@@ -62,6 +62,20 @@ func (m *ConcurrentMap) Get(key interface{}) (interface{}, bool, error) {
 	return value, ok, nil
 }
 
+func (m *ConcurrentMap) Del(key interface{}) (bool, error) {
+	shard, err := m.getShard(key)
+	if err != nil {
+		return false, err
+	}
+
+	shard.Lock()
+	defer shard.Unlock()
+
+	delete(shard.items, key)
+
+	return true, nil
+}
+
 func New(shard uint64) *ConcurrentMap {
 	var items = make([]*ConcurrentMapShared, 0)
 

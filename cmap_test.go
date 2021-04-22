@@ -45,3 +45,18 @@ func TestConcurrentMap(t *testing.T) {
 
 	t.Logf("ok: %v", ok)
 }
+
+func TestIterator(t *testing.T) {
+	m := New(DefaultShard)
+
+	for i := 0; i < 1000; i ++ {
+		if err := m.Set(i, i*2); err != nil {
+			panic(err)
+		}
+	}
+
+	iter := m.Iterator()
+	for kv := range iter.C {
+		t.Logf("%v = %v", kv.Key.(int), kv.Value.(int))
+	}
+}

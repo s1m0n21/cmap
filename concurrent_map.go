@@ -10,16 +10,16 @@ import (
 const DefaultShard uint64 = 32
 
 type ConcurrentMap struct {
-	shard []*ConcurrentMapShared
+	shard []*concurrentMapShared
 	count uint64
 }
 
-type ConcurrentMapShared struct {
+type concurrentMapShared struct {
 	items map[interface{}]interface{}
 	sync.RWMutex
 }
 
-func (m *ConcurrentMap) getShard(key interface{}) (*ConcurrentMapShared, error) {
+func (m *ConcurrentMap) getShard(key interface{}) (*concurrentMapShared, error) {
 	var buf bytes.Buffer
 
 	enc := gob.NewEncoder(&buf)
@@ -77,11 +77,11 @@ func (m *ConcurrentMap) Del(key interface{}) (bool, error) {
 }
 
 func New(shard uint64) *ConcurrentMap {
-	var items = make([]*ConcurrentMapShared, 0)
+	var items = make([]*concurrentMapShared, 0)
 
 	var i uint64 = 0
 	for ; i < shard; i++ {
-		items = append(items, &ConcurrentMapShared{items: make(map[interface{}]interface{})})
+		items = append(items, &concurrentMapShared{items: make(map[interface{}]interface{})})
 	}
 
 	return &ConcurrentMap{

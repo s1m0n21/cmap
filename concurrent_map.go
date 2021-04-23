@@ -62,6 +62,20 @@ func (m *ConcurrentMap) Get(key interface{}) (interface{}, bool, error) {
 	return value, ok, nil
 }
 
+func (m *ConcurrentMap) Has(key interface{}) (bool, error) {
+	shard, err := m.getShard(key)
+	if err != nil {
+		return false, err
+	}
+
+	shard.RLock()
+	defer shard.RUnlock()
+
+	_, has := shard.items[key]
+
+	return has, nil
+}
+
 func (m *ConcurrentMap) Del(key interface{}) (bool, error) {
 	shard, err := m.getShard(key)
 	if err != nil {
